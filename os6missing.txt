@@ -1,0 +1,40 @@
+#include <linux/module.h>
+#include <linux/interrupt.h>
+
+#define MAX_REPETITIONS 10
+
+static void repetitive_tasklet_handler(unsigned long data);
+
+static DECLARE_TASKLET(repetitive_tasklet, repetitive_tasklet_handler, 0);
+
+static int repetitions = 0;
+
+static void repetitive_tasklet_handler(unsigned long data)
+{
+    pr_info("Hi! I'm a tasklet.", data);
+
+  
+    repetitions++;
+
+    if (repetitions < MAX_REPETITIONS) {
+                tasklet_schedule(&repetitive_tasklet);
+    }
+}
+
+static int __init tasklets_init(void)
+{
+    tasklet_schedule(&repetitive_tasklet);
+    return 0;
+}
+
+static void __exit tasklets_exit(void)
+{
+    tasklet_kill(&repetitive_tasklet);
+}
+
+module_init(tasklets_init);
+module_exit(tasklets_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Muhammed Yavuz Berk Sener");
+MODULE_DESCRIPTION("A module demonstrating the use of a repetitive tasklet with a termination condition.");
+MODULE_VERSION("1.0");

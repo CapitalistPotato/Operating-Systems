@@ -1,0 +1,55 @@
+#include<linux/module.h>
+
+#define ARRAY_NUMBER_OF_ELEMENTS 10
+#define STRING_NUMBER_OF_ELEMENTS 40
+
+static char foo[STRING_NUMBER_OF_ELEMENTS];
+static int array[ARRAY_NUMBER_OF_ELEMENTS];
+static int number_of_elements = 0;
+static s8 a;
+static u8 b;
+static s16 c;
+static u16 d;
+static s32 e;
+static u32 f;
+static s64 g;
+static u64 h;
+
+module_param_string(foostring,foo,STRING_NUMBER_OF_ELEMENTS,0644);
+MODULE_PARM_DESC(foo,"A char array parameter");
+module_param_array(array,int,&number_of_elements,0644);
+MODULE_PARM_DESC(array, "An array parameter");
+
+static int __init parammod_init(void)
+{
+int i;
+printk(KERN_ALERT"Module parameter:\n");
+
+printk(KERN_ALERT"foo value: %s\n",foo);
+printk(KERN_ALERT"Sizeof values: %d %d %d %d %d %d %d %d", sizeof(a),sizeof(b),sizeof(c),sizeof(d),sizeof(e),sizeof(f),sizeof(g),sizeof(h));
+printk(KERN_ALERT"array values: ");
+for(i=0;i<number_of_elements;i++)
+printk(KERN_CONT"%d\n",array[i]);
+
+return 0;
+}
+
+static void __exit parammod_exit(void)
+{
+int i;
+printk(KERN_ALERT "Module parameter:\n");
+
+printk(KERN_ALERT "foo value: %s\n",foo);
+
+printk(KERN_ALERT"array values: ");
+for(i=0;i<number_of_elements;i++)
+printk(KERN_CONT"%d\n",array[i]);
+}
+
+module_init(parammod_init);
+module_exit(parammod_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Muhammed Yavuz Berk Sener");
+MODULE_DESCRIPTION("Kernel module with char array (string) and array parametrers.");
+MODULE_VERSION("1.0");
